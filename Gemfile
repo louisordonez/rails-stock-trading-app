@@ -50,4 +50,6 @@ gem "prettier"
 
 gem "rack-cors"
 
-gem "devise"
+gem "jwt"
+
+gem "bcrypt"
