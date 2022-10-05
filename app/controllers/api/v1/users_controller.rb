@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
-  before_action :set_user, only: %i[show destroy]
+  before_action :set_user, only: %i[show update destroy]
 
   def index
     @users = User.all
@@ -26,8 +26,8 @@ class Api::V1::UsersController < ApplicationController
     render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity unless @user.update(user_params)
   end
 
-  def destory
-    @user.destory
+  def destroy
+    @user.destroy
   end
 
   private
@@ -37,6 +37,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:first_name, :last_name, :email, :password)
+    params.permit(:first_name, :last_name, :email, :password, :role)
   end
 end
