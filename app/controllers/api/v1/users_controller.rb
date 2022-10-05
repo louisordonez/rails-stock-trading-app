@@ -18,20 +18,12 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       render json: @user, status: :created
     else
-      render json: {
-               errors: @user.errors.full_messages
-             },
-             status: :unprocessable_entity
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def update
-    unless @user.update(user_params)
-      ender json: {
-              errors: @user.errors.full_messages
-            },
-            status: :unprocessable_entity
-    end
+    render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity unless @user.update(user_params)
   end
 
   def destory
@@ -40,11 +32,11 @@ class Api::V1::UsersController < ApplicationController
 
   private
 
-  def user_params
-    params.permit(:first_name, :last_name, :email, :password)
-  end
-
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.permit(:first_name, :last_name, :email, :password)
   end
 end

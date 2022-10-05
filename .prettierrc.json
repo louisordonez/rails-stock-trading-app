@@ -1,5 +1,5 @@
 
 {
   "rubyPlugins": "plugin/single_quotes",
-  "printWidth" : 80 
+  "printWidth" : 120 
 }
