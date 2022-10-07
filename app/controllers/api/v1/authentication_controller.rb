@@ -12,7 +12,7 @@ class Api::V1::AuthenticationController < ApplicationController
         render json: { error: { message: "Account needs to be verified." } }, status: :unauthorized
       end
     else
-      render json: { error: 'unathorized' }, status: :unauthorized
+      render json: { error: 'Invalid login credentials' }, status: :unauthorized
     end
   end
 
@@ -21,6 +21,7 @@ class Api::V1::AuthenticationController < ApplicationController
     begin
       decoded = JsonWebToken.decode(token)
       @user = User.find_by_email(decoded[:user_email])
+      raise ActiveRecord::RecordNotFound if !@user
       if @user.email_verified
         render json: { message: "Account has already been verified." }, status: :accepted
       else
@@ -40,12 +41,14 @@ class Api::V1::AuthenticationController < ApplicationController
     email = params[:email]
     begin
       @user = User.find_by_email(email)
+      raise ActiveRecord::RecordNotFound if !@user
       if @user.email_verified
         render json: { message: "Account has already been verified." }, status: :accepted
       else 
-        payload: { user_email: @user.email }
+        payload = { user_email: @user.email }
         new_token = JsonWebToken.encode(payload, 24.hours.from_now)
         render json: { email_token: new_token, message: "A confirmation email has been sent to verify your account." }, status: :ok
+      end
     rescue ActiveRecord::RecordNotFound
       render json: { error: { message: "Record not found" } }, status: :not_found
     end
