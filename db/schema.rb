@@ -19,7 +19,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_04_111631) do
     t.string "last_name"
     t.string "email"
     t.string "password_digest"
-    t.string "role"
+    t.boolean "email_verified", default: false
+    t.boolean "trade_verified", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
