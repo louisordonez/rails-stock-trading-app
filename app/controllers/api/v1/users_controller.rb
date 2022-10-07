@@ -16,7 +16,9 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render json: @user, status: :created
+      payload = { user_email: @user.email }
+      email_token = JsonWebToken.encode(payload, 24.hours.from_now)
+      render json: { user: @user, email_token: email_token, message: "A confirmation email has been sent to verify your account." }, status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
@@ -37,6 +39,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:first_name, :last_name, :email, :password, :role)
+    params.permit(:first_name, :last_name, :email, :password)
   end
 end
