@@ -18,7 +18,12 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       payload = { user_email: @user.email }
       email_token = JsonWebToken.encode(payload, 24.hours.from_now)
-      render json: { user: @user, email_token: email_token, message: "A confirmation email has been sent to verify your account." }, status: :created
+      render json: {
+               user: @user,
+               email_token: email_token,
+               message: 'A confirmation email has been sent to verify your account.'
+             },
+             status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
