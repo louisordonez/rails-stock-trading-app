@@ -4,14 +4,10 @@ class Api::V1::AuthenticationController < ApplicationController
   def sign_in
     @user = User.find_by_email(params[:email])
     if (@user&.authenticate(params[:password]))
-      if @user.email_verified
-        payload = { user_id: @user.id }
-        exp = 7.days.from_now.to_i
-        access_token = JsonWebToken.encode(payload, exp)
-        render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
-      else
-        render json: { error: { message: 'Account needs to be verified.' } }, status: :unauthorized
-      end
+      payload = { user_id: @user.id }
+      exp = 7.days.from_now.to_i
+      access_token = JsonWebToken.encode(payload, exp)
+      render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
     else
       render json: { error: 'Invalid login credentials' }, status: :unauthorized
     end
@@ -44,10 +40,11 @@ class Api::V1::AuthenticationController < ApplicationController
   end
 
   def request_token
-    email = params[:email]
+    header = request.headers['Authorization']
+    access_token = header.split(' ').last if header
     begin
-      @user = User.find_by_email(email)
-      raise ActiveRecord::RecordNotFound if !@user
+      decoded = JsonWebToken.decode(access_token)
+      @user = User.find(decoded[:user_id])
       if @user.email_verified
         render json: { message: 'Account has already been verified.' }, status: :accepted
       else

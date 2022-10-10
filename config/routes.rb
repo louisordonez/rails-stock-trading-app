@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
       post 'auth/sign_in', to: 'authentication#sign_in'
       get 'auth/verify', to: 'authentication#verify_token'
-      post 'auth/request', to: 'authentication#request_token'
+      get 'auth/request', to: 'authentication#request_token'
     end
   end
 
