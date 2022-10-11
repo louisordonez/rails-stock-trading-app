@@ -53,3 +53,7 @@ gem "rack-cors"
 gem "jwt"
 
 gem "bcrypt"
+
+gem 'iex-ruby-client'
+
+gem "figaro"

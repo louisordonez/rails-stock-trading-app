@@ -38,3 +38,6 @@
 .DS_Store
 .vscode
 dump.rdb
+
+# Ignore application configuration
+/config/application.yml
