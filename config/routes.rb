@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       get 'auth/verify', to: 'authentication#verify_token'
       get 'auth/request', to: 'authentication#request_token'
       get 'users/show', to: 'users#show'
+      get 'auth/check', to: 'authentication#check_role'
     end
   end
 
