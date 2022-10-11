@@ -9,7 +9,7 @@ class Api::V1::AuthenticationController < ApplicationController
       access_token = JsonWebToken.encode(payload, exp)
       render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
     else
-      render json: { error: 'Invalid login credentials' }, status: :unauthorized
+      render json: { error: { message: 'Invalid login credentials' } }, status: :unauthorized
     end
   end
 
