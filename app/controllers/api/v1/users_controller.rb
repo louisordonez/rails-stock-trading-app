@@ -20,6 +20,7 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
+      @user.roles << Role.find(1)
       payload = { user_email: @user.email }
       email_token = JsonWebToken.encode(payload, 24.hours.from_now)
       render json: {

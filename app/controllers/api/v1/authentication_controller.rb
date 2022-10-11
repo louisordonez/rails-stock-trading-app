@@ -9,7 +9,7 @@ class Api::V1::AuthenticationController < ApplicationController
       access_token = JsonWebToken.encode(payload, exp)
       render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
     else
-      render json: { error: 'Invalid login credentials' }, status: :unauthorized
+      render json: { error: { message: 'Invalid login credentials' } }, status: :unauthorized
     end
   end
 
@@ -58,6 +58,22 @@ class Api::V1::AuthenticationController < ApplicationController
       end
     rescue ActiveRecord::RecordNotFound
       render json: { error: { message: 'Record not found' } }, status: :not_found
+    end
+  end
+
+  def check_role
+    header = request.headers['Authorization']
+    access_token = header.split(' ').last if header
+    begin
+      decoded = JsonWebToken.decode(access_token)
+      @user = User.find(decoded[:user_id])
+      render json: { role: @user.roles.first.name }
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: { message: 'Record not found' } }, status: :not_found
+    rescue JWT::ExpiredSignature
+      render json: { error: { message: 'Session has expired. Log in to continue.' } }, status: :unauthorized
+    rescue JWT::DecodeError
+      render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
     end
   end
 end
