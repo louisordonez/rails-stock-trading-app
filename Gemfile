@@ -55,3 +55,5 @@ gem "jwt"
 gem "bcrypt"
 
 gem 'iex-ruby-client'
+
+gem "figaro"
