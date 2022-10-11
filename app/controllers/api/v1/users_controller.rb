@@ -9,7 +9,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    render json: @user, status: :ok
+    begin
+      render json: @user, status: :ok
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: { message: 'Record not found' } }, status: :not_found
+    end
   end
 
   def create
@@ -40,7 +44,10 @@ class Api::V1::UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:id])
+    header = request.headers['Authorization']
+    access_token = header.split(' ').last if header
+    decoded = JsonWebToken.decode(access_token)
+    @user = User.find(decoded[:user_id])
   end
 
   def user_params
