@@ -8,12 +8,17 @@ Rails.application.routes.draw do
       get 'auth/request', to: 'authentication#request_token'
       get 'auth/check', to: 'authentication#check_role'
 
-      get 'users', to: 'users#index'
-      get 'users/:id', to: 'users#show'
       post 'users', to: 'users#create_user'
+
+      get 'users/show', to: 'users#show_current'
+      put 'users/update', to: 'users#update_current'
+      delete 'users/destroy', to: 'users#destroy_current'
+
       post 'users/admin', to: 'users#create_admin'
-      put 'users/:id', to: 'users#update'
-      delete 'users/:id', to: 'users#destroy'
+      get 'users/all', to: 'users#index'
+      get 'users/show/:id', to: 'users#show_user'
+      put 'users/update/:id', to: 'users#update_user'
+      delete 'users/destroy/:id', to: 'users#destroy_user'
 
       get 'stocks/:symbol', to: 'stocks#stock_info'
     end
