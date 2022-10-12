@@ -68,6 +68,7 @@ class Api::V1::UsersController < ApplicationController
       else
         unless @user.update(user_params)
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        end
       end
     elsif user_request
       if @current_user == @user
