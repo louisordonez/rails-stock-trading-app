@@ -23,4 +23,22 @@ class ApplicationController < ActionController::API
       render json: { error: { message: 'Please sign in to continue.' } }
     end
   end
+
+  def admin_role
+    Role.find(2)
+  end
+
+  def user_role
+    Role.find(1)
+  end
+
+  def admin_request
+    current_role = @current_user.roles.first
+    return current_role == admin_role ? true : false
+  end
+
+  def user_request
+    current_role = @current_user.roles.first
+    return current_role == user_role ? true : false
+  end
 end

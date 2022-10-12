@@ -1,26 +1,32 @@
 class Api::V1::UsersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create]
+  skip_before_action :authenticate_request, only: [:create_user]
   before_action :set_user, only: %i[show update destroy]
 
   def index
-    @users = User.all
-
-    render json: @users, status: :ok
-  end
-
-  def show
-    begin
-      render json: @user, status: :ok
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
+    if admin_request
+      @users = User.all
+      render json: @users, status: :ok
+    else
+      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
     end
   end
 
-  def create
-    @user = User.new(user_params)
+  def show
+    if admin_request
+      render json: @user, status: :ok
+    elsif user_request
+      if @current_user == @user
+        render json: @user, status: :ok
+      else
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+      end
+    end
+  end
 
+  def create_user
+    @user = User.new(user_params)
     if @user.save
-      @user.roles << Role.find(1)
+      @user.roles << user_role
       payload = { user_email: @user.email }
       email_token = JsonWebToken.encode(payload, 24.hours.from_now)
       render json: {
@@ -34,21 +40,77 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def create_admin
+    if admin_request
+      @user = User.new(user_params)
+      if @user.save
+        @user.roles << admin_role
+        payload = { user_email: @user.email }
+        email_token = JsonWebToken.encode(payload, 24.hours.from_now)
+        render json: {
+                 user: @user,
+                 email_token: email_token,
+                 message: 'A confirmation email has been sent to verify your account.'
+               },
+               status: :created
+      else
+        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      end
+    elsif user_request
+      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+    end
+  end
+
   def update
-    render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity unless @user.update(user_params)
+    if admin_request
+      if @user.roles.first == admin_role
+        render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
+      else
+        if @user.update(user_params)
+          render json: { user: @user, message: 'User account has been updated.' }, status: :ok
+        else
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+    elsif user_request
+      if @current_user == @user
+        if @user.update(user_params)
+          render json: { user: @user, message: 'User account has been updated.' }, status: :ok
+        else
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+      end
+    end
   end
 
   def destroy
-    @user.destroy
+    if admin_request
+      if @user.roles.first == admin_role
+        render json: { error: { message: 'Cannot delete Admin account' } }, status: :forbidden
+      else
+        @user.destroy
+        render json: { message: 'User account has been deleted.' }, status: :ok
+      end
+    elsif user_request
+      if @current_user == @user
+        @user.destroy
+        render json: { message: 'User account has been deleted.' }, status: :ok
+      else
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+      end
+    end
   end
 
   private
 
   def set_user
-    header = request.headers['Authorization']
-    access_token = header.split(' ').last if header
-    decoded = JsonWebToken.decode(access_token)
-    @user = User.find(decoded[:user_id])
+    begin
+      @user = User.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: { message: 'Record not found' } }, status: :not_found
+    end
   end
 
   def user_params

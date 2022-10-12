@@ -1,14 +1,19 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :users
+      # resources :users
 
       post 'auth/sign_in', to: 'authentication#sign_in'
       get 'auth/verify', to: 'authentication#verify_token'
       get 'auth/request', to: 'authentication#request_token'
       get 'auth/check', to: 'authentication#check_role'
 
-      get 'users/show', to: 'users#show'
+      get 'users', to: 'users#index'
+      get 'users/:id', to: 'users#show'
+      post 'users', to: 'users#create_user'
+      post 'users/admin', to: 'users#create_admin'
+      put 'users/:id', to: 'users#update'
+      delete 'users/:id', to: 'users#destroy'
 
       get 'stocks/:symbol', to: 'stocks#stock_info'
     end
