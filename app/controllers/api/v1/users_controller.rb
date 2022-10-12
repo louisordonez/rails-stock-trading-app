@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create]
-  before_action :set_user, only: %i[show update destroy]
+  before_action :set_user, only: %i[update destroy]
 
   def index
     if admin_request
@@ -13,9 +13,19 @@ class Api::V1::UsersController < ApplicationController
 
   def show
     begin
-      render json: @user, status: :ok
+      @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render json: { error: { message: 'Record not found' } }, status: :not_found
+    else
+      if admin_request
+        render json: @user, status: :ok
+      else
+        if @current_user == @user
+          render json: @user, status: :ok
+        else
+          render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+        end
+      end
     end
   end
 
