@@ -24,14 +24,20 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def admin_role
+    Role.find(2)
+  end
+
+  def user_role
+    Role.find(1)
+  end
+
   def admin_request
-    admin_role = Role.find(2)
     current_role = @current_user.roles.first
     return current_role == admin_role ? true : false
   end
 
   def user_request
-    user_role = Role.find(1)
     current_role = @current_user.roles.first
     return current_role == user_role ? true : false
   end
