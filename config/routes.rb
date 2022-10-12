@@ -8,7 +8,10 @@ Rails.application.routes.draw do
       get 'auth/request', to: 'authentication#request_token'
       get 'auth/check', to: 'authentication#check_role'
 
-      get 'users/show', to: 'users#show'
+      get 'users', to: 'users#index'
+      get 'users/show/:id', to: 'users#show'
+      post 'users', to: 'users#create_user'
+      post 'users/admin', to: 'users#create_admin'
 
       get 'stocks/:symbol', to: 'stocks#stock_info'
     end
