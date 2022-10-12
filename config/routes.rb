@@ -9,6 +9,8 @@ Rails.application.routes.draw do
       get 'auth/check', to: 'authentication#check_role'
 
       get 'users/show', to: 'users#show'
+
+      get 'stocks/:symbol', to: 'stocks#stock_info'
     end
   end
 
