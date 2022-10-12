@@ -66,13 +66,17 @@ class Api::V1::UsersController < ApplicationController
       if @user.roles.first == admin_role
         render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
       else
-        unless @user.update(user_params)
+        if @user.update(user_params)
+          render json: { user: @user, message: 'User account has been updated.' }, status: :ok
+        else
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
     elsif user_request
       if @current_user == @user
-        unless @user.update(user_params)
+        if @user.update(user_params)
+          render json: { user: @user, message: 'User account has been updated.' }, status: :ok
+        else
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       else
