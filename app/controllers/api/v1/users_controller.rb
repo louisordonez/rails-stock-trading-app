@@ -1,26 +1,20 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create_user]
-  before_action :set_user, only: %i[show update destroy]
+  before_action :set_user, only: %i[show_user update_user destroy_user]
 
   def index
-    if admin_request
-      @users = User.all
-      render json: @users, status: :ok
-    else
-      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
-    end
+    @users = User.all
+    render json: @users, status: :ok if admin_request
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
   end
 
-  def show
-    if admin_request
-      render json: @user, status: :ok
-    elsif user_request
-      if @current_user == @user
-        render json: @user, status: :ok
-      else
-        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
-      end
-    end
+  def show_current
+    render json: @current_user, status: :ok
+  end
+
+  def show_user
+    render json: @user, status: :ok if admin_request
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
   end
 
   def create_user
@@ -56,12 +50,19 @@ class Api::V1::UsersController < ApplicationController
       else
         render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
       end
-    elsif user_request
-      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+    end
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
+  end
+
+  def update_current
+    if @current_user.update(user_params)
+      render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+    else
+      render json: { errors: @current_user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def update
+  def update_user
     if admin_request
       if @user.roles.first == admin_role
         render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
@@ -72,20 +73,16 @@ class Api::V1::UsersController < ApplicationController
           render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
         end
       end
-    elsif user_request
-      if @current_user == @user
-        if @user.update(user_params)
-          render json: { user: @user, message: 'User account has been updated.' }, status: :ok
-        else
-          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
-        end
-      else
-        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
-      end
     end
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
   end
 
-  def destroy
+  def destroy_current
+    @current_user.destroy
+    render json: { message: 'User account has been deleted.' }, status: :ok
+  end
+
+  def destroy_user
     if admin_request
       if @user.roles.first == admin_role
         render json: { error: { message: 'Cannot delete Admin account' } }, status: :forbidden
@@ -93,14 +90,8 @@ class Api::V1::UsersController < ApplicationController
         @user.destroy
         render json: { message: 'User account has been deleted.' }, status: :ok
       end
-    elsif user_request
-      if @current_user == @user
-        @user.destroy
-        render json: { message: 'User account has been deleted.' }, status: :ok
-      else
-        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
-      end
     end
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
   end
 
   private
