@@ -33,6 +33,6 @@ class ApplicationController < ActionController::API
   def user_request
     user_role = Role.find(1)
     current_role = @current_user.roles.first
-    return current_role == uesr_role ? true : false
+    return current_role == user_role ? true : false
   end
 end

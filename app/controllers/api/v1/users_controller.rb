@@ -3,9 +3,12 @@ class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[show update destroy]
 
   def index
-    @users = User.all
-
-    render json: @users, status: :ok
+    if admin_request
+      @users = User.all
+      render json: @users, status: :ok
+    else
+      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+    end
   end
 
   def show
