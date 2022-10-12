@@ -63,8 +63,11 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     if admin_request
-      unless @user.update(user_params)
-        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      if @user.roles.first == admin_role
+        render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
+      else
+        unless @user.update(user_params)
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
       end
     elsif user_request
       if @current_user == @user
@@ -78,17 +81,24 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def destroy
-    @user.destroy
+    if admin_request
+      if @user.roles.first == admin_role
+        render json: { error: { message: 'Cannot delete Admin account' } }, status: :forbidden
+      else
+        @user.destroy
+        render json: { message: 'User account has been deleted.' }, status: :ok
+      end
+    elsif user_request
+      if @current_user == @user
+        @user.destroy
+        render json: { message: 'User account has been deleted.' }, status: :ok
+      else
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+      end
+    end
   end
 
   private
-
-  # def set_user
-  #   header = request.headers['Authorization']
-  #   access_token = header.split(' ').last if header
-  #   decoded = JsonWebToken.decode(access_token)
-  #   @user = User.find(decoded[:user_id])
-  # end
 
   def set_user
     begin

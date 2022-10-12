@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       post 'users', to: 'users#create_user'
       post 'users/admin', to: 'users#create_admin'
       put 'users/:id', to: 'users#update'
+      delete 'users/:id', to: 'users#destroy'
 
       get 'stocks/:symbol', to: 'stocks#stock_info'
     end
