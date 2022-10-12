@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :authenticate_request, only: [:create_user]
-  # before_action :set_user, only: %i[update destroy]
+  before_action :set_user, only: %i[show update destroy]
 
   def index
     if admin_request
@@ -12,19 +12,13 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    begin
-      @user = User.find(params[:id])
-    rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
-    else
-      if admin_request
+    if admin_request
+      render json: @user, status: :ok
+    elsif user_request
+      if @current_user == @user
         render json: @user, status: :ok
       else
-        if @current_user == @user
-          render json: @user, status: :ok
-        else
-          render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
-        end
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
       end
     end
   end
@@ -62,13 +56,25 @@ class Api::V1::UsersController < ApplicationController
       else
         render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
       end
-    else
+    elsif user_request
       render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
     end
   end
 
   def update
-    render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity unless @user.update(user_params)
+    if admin_request
+      unless @user.update(user_params)
+        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      end
+    elsif user_request
+      if @current_user == @user
+        unless @user.update(user_params)
+          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+      end
+    end
   end
 
   def destroy
@@ -84,7 +90,15 @@ class Api::V1::UsersController < ApplicationController
   #   @user = User.find(decoded[:user_id])
   # end
 
+  def set_user
+    begin
+      @user = User.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: { message: 'Record not found' } }, status: :not_found
+    end
+  end
+
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :password)
+    params.permit(:first_name, :last_name, :email, :password)
   end
 end
