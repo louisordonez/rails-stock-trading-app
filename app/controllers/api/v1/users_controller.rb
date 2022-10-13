@@ -21,6 +21,8 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       @user.roles << user_role
+      new_wallet = Wallet.create(balance: 0)
+      WalletTransaction.create(action_type: 'created', total_amount: 0, user: @user, wallet: new_wallet)
       payload = { user_email: @user.email }
       email_token = JsonWebToken.encode(payload, 24.hours.from_now)
       render json: {
