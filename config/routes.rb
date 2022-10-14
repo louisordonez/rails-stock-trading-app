@@ -31,7 +31,9 @@ Rails.application.routes.draw do
       get 'wallets/:id', to: 'wallets#show_wallet'
 
       # Stocks
-      get 'stocks/:symbol', to: 'stocks#stock_info'
+      get 'stocks', to: 'stocks#info'
+      post 'stocks/buy', to: 'stocks#buy'
+      post 'stocks/sell', to: 'stocks#sell'
     end
   end
 
