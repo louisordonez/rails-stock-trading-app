@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      # resources :users
-
+      # Authentication
       post 'auth/sign_in', to: 'authentication#sign_in'
       get 'auth/verify', to: 'authentication#verify_token'
       get 'auth/request', to: 'authentication#request_token'
       get 'auth/check', to: 'authentication#check_role'
 
+      # Users
       post 'users', to: 'users#create_user'
 
       get 'users/show', to: 'users#show_current'
@@ -20,6 +20,14 @@ Rails.application.routes.draw do
       put 'users/update/:id', to: 'users#update_user'
       delete 'users/destroy/:id', to: 'users#destroy_user'
 
+      # Wallets
+      get 'wallets', to: 'wallets#show'
+      post 'wallets/deposit', to: 'wallets#deposit'
+      post 'wallets/withdraw', to: 'wallets#withdraw'
+
+      get 'wallets/:id', to: 'wallets#show_wallet'
+
+      # Stocks
       get 'stocks/:symbol', to: 'stocks#stock_info'
     end
   end

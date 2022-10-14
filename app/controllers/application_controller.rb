@@ -41,4 +41,12 @@ class ApplicationController < ActionController::API
     current_role = @current_user.roles.first
     return current_role == user_role ? true : false
   end
+
+  def restrict_admin
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if admin_request
+  end
+
+  def restrict_user
+    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
+  end
 end
