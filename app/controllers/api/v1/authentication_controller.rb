@@ -13,7 +13,7 @@ class Api::V1::AuthenticationController < ApplicationController
     end
   end
 
-  def verify_token
+  def verify_email
     token = params[:token]
     begin
       decoded = JsonWebToken.decode(token)
@@ -40,7 +40,7 @@ class Api::V1::AuthenticationController < ApplicationController
     end
   end
 
-  def request_token
+  def request_email_token
     header = request.headers['Authorization']
     if header
       access_token = header.split(' ').last
