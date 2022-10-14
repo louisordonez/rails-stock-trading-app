@@ -32,10 +32,43 @@ class Api::V1::StocksController < ApplicationController
                wallet: @wallet,
                portfolio: @portfolio,
                transaction: @transaction,
-               message: "You have purchased #{quantity} #{@symbol} stocks worth $#{price}."
+               message: "You have purchased #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
              }
     else
       render json: { error: { message: 'You have insufficient funds to make this purchase.' } }
+    end
+  end
+
+  def sell
+    quantity = params[:stock_quantity].to_d
+    price = @quote.latest_price
+    total = price * quantity
+    @portfolio = @portfolios.find_by(stock_symbol: @symbol)
+    if @portfolio
+      if @portfolio.stocks_owned_quantity >= quantity
+        @transaction =
+          StockTransaction.create(
+            action_type: 'sell',
+            stock_quantity: quantity,
+            stock_price: price,
+            total_amount: total,
+            user: @current_user,
+            portfolio: @portfolio
+          )
+        @portfolio.update(stocks_owned_quantity: @portfolio.stocks_owned_quantity - quantity)
+        @wallet.update(balance: @wallet.balance + total)
+        render json: {
+                 user: @current_user,
+                 wallet: @wallet,
+                 portfolio: @portfolio,
+                 transaction: @transaction,
+                 message: "You have sold #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
+               }
+      else
+        render json: { error: { message: "You have insufficient #{@symbol} stocks to make this sale." } }
+      end
+    else
+      render json: { error: { message: "#{@symbol} Stock does not exist in your portfolio." } }
     end
   end
 
