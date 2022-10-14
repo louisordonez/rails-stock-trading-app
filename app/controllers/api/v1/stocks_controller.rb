@@ -1,20 +1,41 @@
 class Api::V1::StocksController < ApplicationController
   before_action :restrict_admin
-  before_action :trade_verified?, except: [:info]
+  before_action :trade_verified?, :set_current, except: [:info]
+  before_action :set_IEX
 
   def info
-    symbol = params[:symbol]
-    client = IEX::Api::Client.new
-    begin
-      company = client.company(symbol)
-      logo = client.logo(symbol)
-      quote = client.quote(symbol)
-    rescue IEX::Errors::SymbolNotFoundError
-      render json: { error: { message: 'Symbol not found' } }
-    rescue IEX::Errors::ClientError
-      render json: { error: { message: 'Something went wrong. Could not retrieve requested information.' } }
+    render json: { company: @company, logo: @logo, quote: @quote }
+  end
+
+  def buy
+    quantity = params[:stock_quantity].to_d
+    price = @quote.latest_price
+    total = price * quantity
+    if @wallet.balance >= total
+      @portfolio = @portfolios.find_by(stock_symbol: @symbol)
+      if !@portfolio
+        @portfolio = Portfolio.create(stock_name: @quote.company_name, stock_symbol: @symbol, stocks_owned_quantity: 0)
+      end
+      @transaction =
+        StockTransaction.create(
+          action_type: 'buy',
+          stock_quantity: quantity,
+          stock_price: price,
+          total_amount: total,
+          user: @current_user,
+          portfolio: @portfolio
+        )
+      @portfolio.update(stocks_owned_quantity: @portfolio.stocks_owned_quantity + quantity)
+      @wallet.update(balance: @wallet.balance - total)
+      render json: {
+               user: @current_user,
+               wallet: @wallet,
+               portfolio: @portfolio,
+               transaction: @transaction,
+               message: "You have purchased #{quantity} #{@symbol} stocks worth $#{price}."
+             }
     else
-      render json: { company: company, logo: logo, quote: quote }
+      render json: { error: { message: 'You have insufficient funds to make this purchase.' } }
     end
   end
 
@@ -22,7 +43,26 @@ class Api::V1::StocksController < ApplicationController
 
   def trade_verified?
     if !@current_user.trade_verified
-      render json: { error: { message: 'Account needs to verified for trading.' } }, status: :forbidden
+      render json: { error: { message: 'Account needs to be verified for trading.' } }, status: :forbidden
     end
+  end
+
+  def set_IEX
+    @symbol = params[:symbol].strip.upcase
+    client = IEX::Api::Client.new
+    begin
+      @company = client.company(@symbol)
+      @logo = client.logo(@symbol)
+      @quote = client.quote(@symbol)
+    rescue IEX::Errors::SymbolNotFoundError
+      render json: { error: { message: 'Symbol not found' } }
+    rescue IEX::Errors::ClientError
+      render json: { error: { message: 'Something went wrong. Could not retrieve requested information.' } }
+    end
+  end
+
+  def set_current
+    @wallet = @current_user.wallets.first
+    @portfolios = @current_user.portfolios
   end
 end

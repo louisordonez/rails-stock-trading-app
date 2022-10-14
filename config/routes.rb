@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 
       # Stocks
       get 'stocks', to: 'stocks#info'
+      post 'stocks/buy', to: 'stocks#buy'
     end
   end
 
