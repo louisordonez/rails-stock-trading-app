@@ -1,7 +1,7 @@
 class Api::V1::StocksController < ApplicationController
   before_action :restrict_admin
 
-  def stock_info
+  def info
     symbol = params[:symbol]
     client = IEX::Api::Client.new
     begin
