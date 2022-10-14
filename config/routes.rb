@@ -2,10 +2,13 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # Authentication
-      post 'auth/sign_in', to: 'authentication#sign_in'
-      get 'auth/verify', to: 'authentication#verify_token'
-      get 'auth/request', to: 'authentication#request_token'
       get 'auth/check', to: 'authentication#check_role'
+
+      post 'auth/sign_in', to: 'authentication#sign_in'
+      get 'auth/verify', to: 'authentication#verify_email'
+      get 'auth/request', to: 'authentication#request_email_token'
+
+      put 'auth/trade/:id', to: 'authentication#verify_trade'
 
       # Users
       post 'users', to: 'users#create_user'

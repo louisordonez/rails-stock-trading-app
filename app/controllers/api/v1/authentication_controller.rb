@@ -1,5 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request
+  skip_before_action :authenticate_request, except: [:verify_trade]
+  before_action :restrict_user, :set_user, only: [:verify_trade]
 
   def sign_in
     @user = User.find_by_email(params[:email])
@@ -13,7 +14,7 @@ class Api::V1::AuthenticationController < ApplicationController
     end
   end
 
-  def verify_token
+  def verify_email
     token = params[:token]
     begin
       decoded = JsonWebToken.decode(token)
@@ -40,7 +41,7 @@ class Api::V1::AuthenticationController < ApplicationController
     end
   end
 
-  def request_token
+  def request_email_token
     header = request.headers['Authorization']
     if header
       access_token = header.split(' ').last
@@ -67,6 +68,15 @@ class Api::V1::AuthenticationController < ApplicationController
     end
   end
 
+  def verify_trade
+    if @user.trade_verified
+      render json: { message: 'Account has already been approved for trading.' }
+    else
+      @user.update(trade_verified: true)
+      render json: { user: @user, message: 'Account has been approved for trading.' }
+    end
+  end
+
   def check_role
     header = request.headers['Authorization']
     if header
@@ -85,6 +95,16 @@ class Api::V1::AuthenticationController < ApplicationController
       end
     else
       render json: { error: { message: 'Please sign in to continue.' } }
+    end
+  end
+
+  private
+
+  def set_user
+    begin
+      @user = User.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: { message: 'Record not found' } }, status: :not_found
     end
   end
 end
