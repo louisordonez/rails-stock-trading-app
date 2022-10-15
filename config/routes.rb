@@ -34,6 +34,12 @@ Rails.application.routes.draw do
       get 'stocks', to: 'stocks#info'
       post 'stocks/buy', to: 'stocks#buy'
       post 'stocks/sell', to: 'stocks#sell'
+
+      # Transactions
+      get 'transactions', to: 'transactions#user_index'
+
+      get 'transactions/all', to: 'transactions#admin_index'
+      get 'transactions/:id', to: 'transactions#show_index'
     end
   end
 
