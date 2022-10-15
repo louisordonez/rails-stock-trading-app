@@ -1,6 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, except: %i[verify_trade check_role]
-  skip_before_action :email_verified?, except: [:check_role]
+  skip_before_action :authenticate_request, except: %i[request_email_token verify_trade check_role]
+  skip_before_action :email_verified?, except: [:verify_trade]
   before_action :restrict_user, :set_user, only: [:verify_trade]
 
   def sign_in
@@ -43,29 +43,16 @@ class Api::V1::AuthenticationController < ApplicationController
   end
 
   def request_email_token
-    header = request.headers['Authorization']
-    if header
-      access_token = header.split(' ').last
-      begin
-        decoded = JsonWebToken.decode(access_token)
-        @user = User.find(decoded[:user_id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: { message: 'Record not found' } }, status: :not_found
-      else
-        if @user.email_verified
-          render json: { message: 'Account has already been verified.' }, status: :accepted
-        else
-          payload = { user_email: @user.email }
-          new_token = JsonWebToken.encode(payload, 24.hours.from_now)
-          render json: {
-                   email_token: new_token,
-                   message: 'A confirmation email has been sent to verify your account.'
-                 },
-                 status: :ok
-        end
-      end
+    if @current_user.email_verified
+      render json: { message: 'Account has already been verified.' }, status: :accepted
     else
-      render json: { error: { message: 'Please sign in to continue.' } }
+      payload = { user_email: @current_user.email }
+      new_token = JsonWebToken.encode(payload, 24.hours.from_now)
+      render json: {
+               email_token: new_token,
+               message: 'A confirmation email has been sent to verify your account.'
+             },
+             status: :ok
     end
   end
 
