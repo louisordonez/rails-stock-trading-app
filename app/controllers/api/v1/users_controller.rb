@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:create_user]
+  skip_before_action :authenticate_request, :email_verified?, only: [:create_user]
   before_action :set_user, only: %i[show_user update_user destroy_user]
 
   def index
