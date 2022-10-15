@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   include JsonWebToken
 
-  before_action :authenticate_request
+  before_action :authenticate_request, :email_verified?
 
   private
 
@@ -20,7 +20,13 @@ class ApplicationController < ActionController::API
         render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
       end
     else
-      render json: { error: { message: 'Please sign in to continue.' } }
+      render json: { error: { message: 'Please sign in to continue.' } }, status: :forbidden
+    end
+  end
+
+  def email_verified?
+    if !@current_user.email_verified
+      render json: { error: { message: 'Account needs to be verified to continue.' } }, status: :forbidden
     end
   end
 
