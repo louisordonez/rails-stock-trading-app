@@ -2,6 +2,8 @@
 
 one:
   balance: 9.99
+  user: one
 
 two:
   balance: 9.99
+  user: two

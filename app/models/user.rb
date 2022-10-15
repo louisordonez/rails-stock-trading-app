@@ -4,8 +4,8 @@ class User < ApplicationRecord
   has_and_belongs_to_many :roles
   has_many :stock_transactions
   has_many :portfolios, through: :stock_transactions
-  has_many :wallet_transactions
-  has_many :wallets, through: :wallet_transactions
+  has_one :wallet
+  has_many :wallet_transactions, through: :wallet
 
   validates :first_name, presence: true
   validates :last_name, presence: true
