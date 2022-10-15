@@ -12,31 +12,12 @@ class Api::V1::StocksController < ApplicationController
     price = @quote.latest_price
     total = price * quantity
     if @wallet.balance >= total
-      @portfolio = @portfolios.find_by(stock_symbol: @symbol)
-      if !@portfolio
-        @portfolio = Portfolio.create(stock_name: @quote.company_name, stock_symbol: @symbol, stocks_owned_quantity: 0)
-      end
-      @transaction =
-        StockTransaction.create(
-          action_type: 'buy',
-          stock_quantity: quantity,
-          stock_price: price,
-          total_amount: total,
-          user: @current_user,
-          portfolio: @portfolio
-        )
-      @portfolio.update(stocks_owned_quantity: @portfolio.stocks_owned_quantity + quantity)
-      @wallet.update(balance: @wallet.balance - total)
-      render json: {
-               user: @current_user,
-               wallet: @wallet,
-               portfolio: @portfolio,
-               transaction: @transaction,
-               message: "You have purchased #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
-             },
-             status: :ok
+      buy_params = { quantity: quantity, price: price, total: total, symbol: @symbol, quote: @quote }
+      response = Transaction::Stock.buy(@wallet, @portfolios, buy_params)
+      render json: response, status: :ok
     else
       render json: {
+               wallet: @wallet,
                error: {
                  message: 'You have insufficient funds to make this purchase.'
                }
@@ -52,27 +33,12 @@ class Api::V1::StocksController < ApplicationController
     @portfolio = @portfolios.find_by(stock_symbol: @symbol)
     if @portfolio
       if @portfolio.stocks_owned_quantity >= quantity
-        @transaction =
-          StockTransaction.create(
-            action_type: 'sell',
-            stock_quantity: quantity,
-            stock_price: price,
-            total_amount: total,
-            user: @current_user,
-            portfolio: @portfolio
-          )
-        @portfolio.update(stocks_owned_quantity: @portfolio.stocks_owned_quantity - quantity)
-        @wallet.update(balance: @wallet.balance + total)
-        render json: {
-                 user: @current_user,
-                 wallet: @wallet,
-                 portfolio: @portfolio,
-                 transaction: @transaction,
-                 message: "You have sold #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
-               },
-               status: :ok
+        sell_params = { quantity: quantity, price: price, total: total, symbol: @symbol }
+        response = Transaction::Stock.sell(@wallet, @portfolio, sell_params)
+        render json: response, status: :ok
       else
         render json: {
+                 portfolio: @portfolio,
                  error: {
                    message: "You have insufficient #{@symbol} stocks to make this sale."
                  }
