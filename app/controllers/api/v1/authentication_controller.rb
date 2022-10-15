@@ -1,5 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
   skip_before_action :authenticate_request, except: %i[verify_trade check_role]
+  skip_before_action :email_verified?, except: [:check_role]
   before_action :restrict_user, :set_user, only: [:verify_trade]
 
   def sign_in
