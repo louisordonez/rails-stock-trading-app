@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
         render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
       end
     else
-      render json: { error: { message: 'Please sign in to continue.' } }
+      render json: { error: { message: 'Please sign in to continue.' } }, status: :forbidden
     end
   end
 

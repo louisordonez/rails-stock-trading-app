@@ -4,7 +4,7 @@ class Api::V1::StocksController < ApplicationController
   before_action :set_IEX
 
   def info
-    render json: { company: @company, logo: @logo, quote: @quote }
+    render json: { company: @company, logo: @logo, quote: @quote }, status: :ok
   end
 
   def buy
@@ -33,9 +33,15 @@ class Api::V1::StocksController < ApplicationController
                portfolio: @portfolio,
                transaction: @transaction,
                message: "You have purchased #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
-             }
+             },
+             status: :ok
     else
-      render json: { error: { message: 'You have insufficient funds to make this purchase.' } }
+      render json: {
+               error: {
+                 message: 'You have insufficient funds to make this purchase.'
+               }
+             },
+             status: :unprocessable_entity
     end
   end
 
@@ -63,12 +69,23 @@ class Api::V1::StocksController < ApplicationController
                  portfolio: @portfolio,
                  transaction: @transaction,
                  message: "You have sold #{quantity} #{@symbol} stocks worth $#{total} at $#{price}/stock."
-               }
+               },
+               status: :ok
       else
-        render json: { error: { message: "You have insufficient #{@symbol} stocks to make this sale." } }
+        render json: {
+                 error: {
+                   message: "You have insufficient #{@symbol} stocks to make this sale."
+                 }
+               },
+               status: :unprocessable_entity
       end
     else
-      render json: { error: { message: "#{@symbol} Stock does not exist in your portfolio." } }
+      render json: {
+               error: {
+                 message: "#{@symbol} Stock does not exist in your portfolio."
+               }
+             },
+             status: :unprocessable_entity
     end
   end
 
@@ -88,9 +105,14 @@ class Api::V1::StocksController < ApplicationController
       @logo = client.logo(@symbol)
       @quote = client.quote(@symbol)
     rescue IEX::Errors::SymbolNotFoundError
-      render json: { error: { message: 'Symbol not found' } }
+      render json: { error: { message: 'Symbol not found' } }, status: :not_found
     rescue IEX::Errors::ClientError
-      render json: { error: { message: 'Something went wrong. Could not retrieve requested information.' } }
+      render json: {
+               error: {
+                 message: 'Something went wrong. Could not retrieve requested information.'
+               }
+             },
+             status: :service_unavailable
     end
   end
 
