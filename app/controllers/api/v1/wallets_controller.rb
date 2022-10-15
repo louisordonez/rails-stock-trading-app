@@ -1,4 +1,6 @@
 class Api::V1::WalletsController < ApplicationController
+  include Transaction
+
   before_action :restrict_admin, :current_wallet, except: [:show_wallet]
   before_action :restrict_user, :set_wallet, only: [:show_wallet]
 
@@ -11,28 +13,16 @@ class Api::V1::WalletsController < ApplicationController
   end
 
   def deposit
-    wallet_transaction =
-      @wallet.wallet_transactions.create(action_type: 'deposit', total_amount: params[:total_amount].to_d)
-    @wallet.update(balance: @wallet.balance + params[:total_amount].to_d)
-    render json: {
-             user: @current_user,
-             wallet: @wallet,
-             transaction: wallet_transaction,
-             message: "Deposited $#{params[:total_amount]} to your account."
-           }
+    total_amount = params[:total_amount].to_d
+    response = Transaction::Wallet.deposit(@wallet, total_amount)
+    render json: response, status: :ok
   end
 
   def withdraw
-    if @wallet.balance >= params[:total_amount].to_d
-      wallet_transaction =
-        @wallet.wallet_transactions.create(action_type: 'withdrawal', total_amount: params[:total_amount].to_d)
-      @wallet.update(balance: @wallet.balance - params[:total_amount].to_d)
-      render json: {
-               user: @current_user,
-               wallet: @wallet,
-               transaction: wallet_transaction,
-               message: "Withdrawn $#{params[:total_amount]} from your account."
-             }
+    total_amount = params[:total_amount].to_d
+    if @wallet.balance >= total_amount
+      response = Transaction::Wallet.withdraw(@wallet, total_amount)
+      render json: response, status: :ok
     else
       render json: { error: { message: 'You have insufficient funds.' } }
     end
