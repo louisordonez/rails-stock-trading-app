@@ -1,5 +1,5 @@
 class Api::V1::AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, except: [:verify_trade]
+  skip_before_action :authenticate_request, except: %i[verify_trade check_role]
   before_action :restrict_user, :set_user, only: [:verify_trade]
 
   def sign_in
@@ -78,24 +78,7 @@ class Api::V1::AuthenticationController < ApplicationController
   end
 
   def check_role
-    header = request.headers['Authorization']
-    if header
-      access_token = header.split(' ').last
-      begin
-        decoded = JsonWebToken.decode(access_token)
-        @user = User.find(decoded[:user_id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: { message: 'Record not found' } }, status: :not_found
-      rescue JWT::ExpiredSignature
-        render json: { error: { message: 'Session has expired. Log in to continue.' } }, status: :unauthorized
-      rescue JWT::DecodeError
-        render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
-      else
-        render json: { role: @user.roles.first.name }
-      end
-    else
-      render json: { error: { message: 'Please sign in to continue.' } }
-    end
+    render json: { role: @current_user.roles.first.name }, status: :ok
   end
 
   private
