@@ -95,7 +95,7 @@ class Api::V1::StocksController < ApplicationController
   end
 
   def set_current
-    @wallet = @current_user.wallets.first
+    @wallet = @current_user.wallet
     @portfolios = @current_user.portfolios
   end
 end

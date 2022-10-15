@@ -1,4 +1,4 @@
 class Wallet < ApplicationRecord
+  belongs_to :user
   has_many :wallet_transactions
-  has_many :users, through: :wallet_transactions
 end
