@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       get 'auth/verify', to: 'authentication#verify_email'
       get 'auth/request', to: 'authentication#request_email_token'
 
-      put 'auth/trade/:id', to: 'authentication#verify_trade'
+      patch 'auth/trade/:id', to: 'authentication#verify_trade'
 
       # Users
       post 'users', to: 'users#create_user'
