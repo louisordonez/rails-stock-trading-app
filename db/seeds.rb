@@ -22,6 +22,17 @@ verified =
 verified.roles << Role.find(1)
 verified.update(email_verified: true)
 verified.update(trade_verified: true)
+verified.create_wallet(balance: 10000.00)
+
+unverified =
+  User.create!(
+    first_name: 'unverified',
+    last_name: 'unverified',
+    email: 'unverified@email.com',
+    password: "#{Rails.application.credentials.users.unverified_password}"
+  )
+unverified.roles << Role.find(1)
+unverified.create_wallet(balance: 0)
 
 email_verified =
   User.create!(
@@ -32,3 +43,4 @@ email_verified =
   )
 email_verified.roles << Role.find(1)
 email_verified.update(email_verified: true)
+email_verified.create_wallet(balance: 10000.00)
