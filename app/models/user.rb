@@ -9,6 +9,19 @@ class User < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :email, presence: true, uniqueness: true
-  validates :password_digest, presence: true
+  validates :email, presence: true, 
+              format: { with: URI::MailTo::EMAIL_REGEXP },
+              uniqueness: true
+  validates :password, presence: true, length: { minimum: 6 }
+  validates :email_verified, inclusion: [true, false]
+  validates :trade_verified, inclusion: [true, false]
+
+  before_validation :set_default
+
+  private 
+
+  def set_default
+    self.email_verified = false if self.email_verified.nil?
+    self.trade_verified = false if self.trade_verified.nil?
+  end
 end
