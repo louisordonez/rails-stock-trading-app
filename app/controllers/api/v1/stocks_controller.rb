@@ -9,6 +9,9 @@ class Api::V1::StocksController < ApplicationController
 
   def buy
     quantity = params[:stock_quantity].to_d
+    if quantity == 0
+      render json: { error: { message: 'Stock quantity must be greater than zero.' } }, status: :unprocessable_entity
+    end
     price = @quote.latest_price
     total = price * quantity
     if @wallet.balance >= total
@@ -28,6 +31,9 @@ class Api::V1::StocksController < ApplicationController
 
   def sell
     quantity = params[:stock_quantity].to_d
+    if quantity == 0
+      render json: { error: { message: 'Stock quantity must be greater than zero.' } }, status: :unprocessable_entity
+    end
     price = @quote.latest_price
     total = price * quantity
     @portfolio = @portfolios.find_by(stock_symbol: @symbol)

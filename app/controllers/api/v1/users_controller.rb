@@ -21,7 +21,7 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       @user.roles << user_role
-      wallet = @user.create_wallet(balance: 0)
+      wallet = @user.create_wallet
       payload = { user_email: @user.email }
       email_token = JsonWebToken.encode(payload, 24.hours.from_now)
       render json: {
@@ -31,7 +31,7 @@ class Api::V1::UsersController < ApplicationController
              },
              status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
     end
   end
 
@@ -49,7 +49,7 @@ class Api::V1::UsersController < ApplicationController
                },
                status: :created
       else
-        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
       end
     end
     render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
@@ -59,7 +59,7 @@ class Api::V1::UsersController < ApplicationController
     if @current_user.update(user_params)
       render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
     else
-      render json: { errors: @current_user.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
     end
   end
 
@@ -71,7 +71,7 @@ class Api::V1::UsersController < ApplicationController
         if @user.update(user_params)
           render json: { user: @user, message: 'User account has been updated.' }, status: :ok
         else
-          render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
         end
       end
     end

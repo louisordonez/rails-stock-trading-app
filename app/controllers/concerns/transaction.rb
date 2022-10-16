@@ -18,7 +18,7 @@ module Transaction
       portfolio = portfolios.find_by(stock_symbol: hash[:symbol])
       if !portfolio
         portfolio =
-          Portfolio.create(stock_name: hash[:quote].company_name, stock_symbol: hash[:symbol], stocks_owned_quantity: 0)
+          Portfolio.create(stock_name: hash[:quote].company_name, stock_symbol: hash[:symbol])
       end
       transaction =
         StockTransaction.create(
