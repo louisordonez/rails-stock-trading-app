@@ -51,7 +51,6 @@ module Transaction
           stock_price: hash[:price],
           total_amount: hash[:total],
           user: wallet.user,
-          portfolio: portfolio,
         )
       portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity - hash[:quantity])
       wallet.update(balance: wallet.balance + hash[:total])
