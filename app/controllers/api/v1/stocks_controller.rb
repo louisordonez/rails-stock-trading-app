@@ -1,4 +1,6 @@
 class Api::V1::StocksController < ApplicationController
+  include Transaction::Stock
+
   before_action :restrict_admin
   before_action :trade_verified?, :set_current, except: [:info]
   before_action :set_IEX
@@ -77,7 +79,7 @@ class Api::V1::StocksController < ApplicationController
       @logo = client.logo(@symbol)
       @quote = client.quote(@symbol)
     rescue IEX::Errors::SymbolNotFoundError
-      render json: { error: { message: 'Symbol not found' } }, status: :not_found
+      render json: { error: { message: 'Symbol not found.' } }, status: :not_found
     rescue IEX::Errors::ClientError
       render json: {
                error: {
