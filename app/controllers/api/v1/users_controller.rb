@@ -27,9 +27,10 @@ class Api::V1::UsersController < ApplicationController
       render json: {
                user: @user,
                email_token: email_token,
-               message: 'A confirmation email has been sent to verify your account.'
+               message: 'A confirmation email has been sent to verify your account.',
              },
              status: :created
+      UserMailer.with(user: @user, email_token: email_token).confirm_email.deliver_now
     else
       render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
     end
@@ -45,7 +46,7 @@ class Api::V1::UsersController < ApplicationController
         render json: {
                  user: @user,
                  email_token: email_token,
-                 message: 'A confirmation email has been sent to verify your account.'
+                 message: 'A confirmation email has been sent to verify your account.',
                },
                status: :created
       else
