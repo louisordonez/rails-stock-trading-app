@@ -5,6 +5,26 @@ class ApplicationController < ActionController::API
 
   private
 
+  def admin_role
+    Role.find(2)
+  end
+
+  def user_role
+    Role.find(1)
+  end
+
+  def restrict_admin
+    if @current_user.roles.first == admin_role
+      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+    end
+  end
+
+  def restrict_user
+    if @current_user.roles.first == user_role
+      render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden
+    end
+  end
+
   def authenticate_request
     header = request.headers['Authorization']
     if header
@@ -13,7 +33,7 @@ class ApplicationController < ActionController::API
         decoded = JsonWebToken.decode(access_token)
         @current_user = User.find(decoded[:user_id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: { message: 'Record not found' } }, status: :not_found
+        render json: { error: { message: 'Record not found.' } }, status: :not_found
       rescue JWT::ExpiredSignature
         render json: { error: { message: 'Session has expired. Sign in to continue.' } }, status: :unauthorized
       rescue JWT::DecodeError
@@ -28,31 +48,5 @@ class ApplicationController < ActionController::API
     if !@current_user.email_verified
       render json: { error: { message: 'Account needs to be verified to continue.' } }, status: :forbidden
     end
-  end
-
-  def admin_role
-    Role.find(2)
-  end
-
-  def user_role
-    Role.find(1)
-  end
-
-  def admin_request
-    current_role = @current_user.roles.first
-    return current_role == admin_role ? true : false
-  end
-
-  def user_request
-    current_role = @current_user.roles.first
-    return current_role == user_role ? true : false
-  end
-
-  def restrict_admin
-    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if admin_request
-  end
-
-  def restrict_user
-    render json: { error: { message: 'Request Forbidden.' } }, status: :forbidden if user_request
   end
 end

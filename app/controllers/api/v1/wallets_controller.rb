@@ -16,21 +16,23 @@ class Api::V1::WalletsController < ApplicationController
     total_amount = params[:total_amount].to_d
     if total_amount == 0
       render json: { error: { message: 'Total amount must be greater than zero.' } }, status: :unprocessable_entity
+    else
+      response = Transaction::Wallet.deposit(@wallet, total_amount)
+      render json: response, status: :ok
     end
-    response = Transaction::Wallet.deposit(@wallet, total_amount)
-    render json: response, status: :ok
   end
 
   def withdraw
     total_amount = params[:total_amount].to_d
     if total_amount == 0
       render json: { error: { message: 'Total amount must be greater than zero.' } }, status: :unprocessable_entity
-    end
-    if @wallet.balance >= total_amount
-      response = Transaction::Wallet.withdraw(@wallet, total_amount)
-      render json: response, status: :ok
     else
-      render json: { error: { message: 'You have insufficient funds.' } }, status: :unprocessable_entity
+      if @wallet.balance >= total_amount
+        response = Transaction::Wallet.withdraw(@wallet, total_amount)
+        render json: response, status: :ok
+      else
+        render json: { error: { message: 'You have insufficient funds.' } }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -42,7 +44,7 @@ class Api::V1::WalletsController < ApplicationController
 
   def set_wallet
     begin
-      @wallet = Wallet.find(params[:id])
+      @wallet = User.find(params[:id]).wallet
     rescue ActiveRecord::RecordNotFound
       render json: { error: { message: 'Record not found' } }, status: :not_found
     end

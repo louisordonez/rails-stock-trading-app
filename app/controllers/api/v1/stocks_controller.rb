@@ -1,4 +1,6 @@
 class Api::V1::StocksController < ApplicationController
+  include Transaction::Stock
+
   before_action :restrict_admin
   before_action :trade_verified?, :set_current, except: [:info]
   before_action :set_IEX
@@ -11,21 +13,22 @@ class Api::V1::StocksController < ApplicationController
     quantity = params[:stock_quantity].to_d
     if quantity == 0
       render json: { error: { message: 'Stock quantity must be greater than zero.' } }, status: :unprocessable_entity
-    end
-    price = @quote.latest_price
-    total = price * quantity
-    if @wallet.balance >= total
-      buy_params = { quantity: quantity, price: price, total: total, symbol: @symbol, quote: @quote }
-      response = Transaction::Stock.buy(@wallet, @portfolios, buy_params)
-      render json: response, status: :ok
     else
-      render json: {
-               wallet: @wallet,
-               error: {
-                 message: 'You have insufficient funds to make this purchase.'
-               }
-             },
-             status: :unprocessable_entity
+      price = @quote.latest_price
+      total = price * quantity
+      if @wallet.balance >= total
+        buy_params = { quantity: quantity, price: price, total: total, symbol: @symbol, quote: @quote }
+        response = Transaction::Stock.buy(@wallet, @portfolios, buy_params)
+        render json: response, status: :ok
+      else
+        render json: {
+                 wallet: @wallet,
+                 error: {
+                   message: 'You have insufficient funds to make this purchase.'
+                 }
+               },
+               status: :unprocessable_entity
+      end
     end
   end
 
@@ -33,31 +36,32 @@ class Api::V1::StocksController < ApplicationController
     quantity = params[:stock_quantity].to_d
     if quantity == 0
       render json: { error: { message: 'Stock quantity must be greater than zero.' } }, status: :unprocessable_entity
-    end
-    price = @quote.latest_price
-    total = price * quantity
-    @portfolio = @portfolios.find_by(stock_symbol: @symbol)
-    if @portfolio
-      if @portfolio.stocks_owned_quantity >= quantity
-        sell_params = { quantity: quantity, price: price, total: total, symbol: @symbol }
-        response = Transaction::Stock.sell(@wallet, @portfolio, sell_params)
-        render json: response, status: :ok
+    else
+      price = @quote.latest_price
+      total = price * quantity
+      @portfolio = @portfolios.find_by(stock_symbol: @symbol)
+      if @portfolio
+        if @portfolio.stocks_owned_quantity >= quantity
+          sell_params = { quantity: quantity, price: price, total: total, symbol: @symbol }
+          response = Transaction::Stock.sell(@wallet, @portfolio, sell_params)
+          render json: response, status: :ok
+        else
+          render json: {
+                   portfolio: @portfolio,
+                   error: {
+                     message: "You have insufficient #{@symbol} stocks to make this sale."
+                   }
+                 },
+                 status: :unprocessable_entity
+        end
       else
         render json: {
-                 portfolio: @portfolio,
                  error: {
-                   message: "You have insufficient #{@symbol} stocks to make this sale."
+                   message: "#{@symbol} Stock does not exist in your portfolio."
                  }
                },
                status: :unprocessable_entity
       end
-    else
-      render json: {
-               error: {
-                 message: "#{@symbol} Stock does not exist in your portfolio."
-               }
-             },
-             status: :unprocessable_entity
     end
   end
 
@@ -77,7 +81,7 @@ class Api::V1::StocksController < ApplicationController
       @logo = client.logo(@symbol)
       @quote = client.quote(@symbol)
     rescue IEX::Errors::SymbolNotFoundError
-      render json: { error: { message: 'Symbol not found' } }, status: :not_found
+      render json: { error: { message: 'Symbol not found.' } }, status: :not_found
     rescue IEX::Errors::ClientError
       render json: {
                error: {

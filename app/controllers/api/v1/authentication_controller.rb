@@ -11,7 +11,7 @@ class Api::V1::AuthenticationController < ApplicationController
       access_token = JsonWebToken.encode(payload, exp)
       render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
     else
-      render json: { error: { message: 'Invalid login credentials' } }, status: :unauthorized
+      render json: { error: { message: 'Invalid login credentials.' } }, status: :unauthorized
     end
   end
 
@@ -22,11 +22,11 @@ class Api::V1::AuthenticationController < ApplicationController
       @user = User.find_by_email(decoded[:user_email])
       raise ActiveRecord::RecordNotFound if !@user
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
+      render json: { error: { message: 'Record not found.' } }, status: :not_found
     rescue JWT::ExpiredSignature
       render json: {
                error: {
-                 message: 'Confirmation invalid. Verification token has expired'
+                 message: 'Confirmation invalid. Verification token has expired.'
                }
              },
              status: :unprocessable_entity
@@ -75,7 +75,7 @@ class Api::V1::AuthenticationController < ApplicationController
     begin
       @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
+      render json: { error: { message: 'Record not found.' } }, status: :not_found
     end
   end
 end
