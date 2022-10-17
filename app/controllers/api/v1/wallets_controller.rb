@@ -1,5 +1,5 @@
 class Api::V1::WalletsController < ApplicationController
-  include Transaction
+  include Transaction::Wallet
 
   before_action :restrict_admin, :current_wallet, except: [:show_wallet]
   before_action :restrict_user, :set_wallet, only: [:show_wallet]
@@ -30,7 +30,7 @@ class Api::V1::WalletsController < ApplicationController
       response = Transaction::Wallet.withdraw(@wallet, total_amount)
       render json: response, status: :ok
     else
-      render json: { error: { message: 'You have insufficient funds.' } }
+      render json: { error: { message: 'You have insufficient funds.' } }, status: :unprocessable_entity
     end
   end
 
