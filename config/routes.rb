@@ -40,6 +40,9 @@ Rails.application.routes.draw do
 
       get 'transactions/all', to: 'transactions#admin_index'
       get 'transactions/:id', to: 'transactions#show_index'
+
+      # Routes
+      get 'portfolios', to: 'portfolios#show'
     end
   end
 
