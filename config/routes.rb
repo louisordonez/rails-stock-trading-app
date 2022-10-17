@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       post 'users', to: 'users#create_user'
 
       get 'users/show', to: 'users#show_current'
-      put 'users/update', to: 'users#update_current'
+      patch 'users/update', to: 'users#update_current'
       delete 'users/destroy', to: 'users#destroy_current'
 
       post 'users/admin', to: 'users#create_admin'
