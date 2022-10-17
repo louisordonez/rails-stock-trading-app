@@ -56,10 +56,14 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_current
-    if @current_user.update(user_params)
-      render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+    if !params[:password].nil? && params[:password].strip.length < 6
+      render json: { error: { message: 'Password must be at least 6 characters long.' } }, status: :unprocessable_entity
     else
-      render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
+      if @current_user.update(user_params)
+        render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+      else
+        render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -68,7 +72,7 @@ class Api::V1::UsersController < ApplicationController
       if @user.roles.first == admin_role
         render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
       else
-        if @user.update(user_params)
+        if @user.update(user_update_params)
           render json: { user: @user, message: 'User account has been updated.' }, status: :ok
         else
           render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
@@ -107,5 +111,9 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
     params.permit(:first_name, :last_name, :email, :password)
+  end
+
+  def user_update_params
+    params.permit(:first_name, :last_name, :email)
   end
 end
