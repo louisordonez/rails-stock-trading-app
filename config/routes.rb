@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       post 'users/admin', to: 'users#create_admin'
       get 'users/all', to: 'users#index'
       get 'users/show/:id', to: 'users#show_user'
-      put 'users/update/:id', to: 'users#update_user'
+      patch 'users/update/:id', to: 'users#update_user'
       delete 'users/destroy/:id', to: 'users#destroy_user'
 
       # Wallets
