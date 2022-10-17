@@ -16,18 +16,17 @@ module Transaction
   module Stock
     def self.buy(wallet, portfolios, hash)
       portfolio = portfolios.find_by(stock_symbol: hash[:symbol])
-      if !portfolio
-        portfolio =
-          Portfolio.create(stock_name: hash[:quote].company_name, stock_symbol: hash[:symbol])
-      end
+      portfolio = Portfolio.create(stock_name: hash[:quote].company_name, stock_symbol: hash[:symbol]) if !portfolio
       transaction =
         StockTransaction.create(
           action_type: 'buy',
+          stock_symbol: hash[:symbol],
+          stock_name: hash[:quote].company_name,
           stock_quantity: hash[:quantity],
           stock_price: hash[:price],
           total_amount: hash[:total],
           user: wallet.user,
-          portfolio: portfolio
+          portfolio: portfolio,
         )
       portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity + hash[:quantity])
       wallet.update(balance: wallet.balance - hash[:total])
@@ -37,7 +36,7 @@ module Transaction
           portfolio: portfolio,
           transaction: transaction,
           message:
-            "You have purchased #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock."
+            "You have purchased #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock.",
         }
       )
     end
@@ -46,11 +45,13 @@ module Transaction
       transaction =
         StockTransaction.create(
           action_type: 'sell',
+          stock_symbol: hash[:symbol],
+          stock_name: hash[:quote].company_name,
           stock_quantity: hash[:quantity],
           stock_price: hash[:price],
           total_amount: hash[:total],
           user: wallet.user,
-          portfolio: portfolio
+          portfolio: portfolio,
         )
       portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity - hash[:quantity])
       wallet.update(balance: wallet.balance + hash[:total])
@@ -60,7 +61,7 @@ module Transaction
           portfolio: portfolio,
           transaction: transaction,
           message:
-            "You have sold #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock."
+            "You have sold #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock.",
         }
       )
     end
