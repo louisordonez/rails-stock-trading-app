@@ -56,10 +56,14 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_current
-    if @current_user.update(user_params)
-      render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+    if !params[:password].nil? && params[:password].strip.length < 6
+      render json: { error: { message: 'Password must be at least 6 characters long.' } }, status: :unprocessable_entity
     else
-      render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
+      if @current_user.update(user_params)
+        render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+      else
+        render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
+      end
     end
   end
 
