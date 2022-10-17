@@ -46,7 +46,7 @@ module Transaction
         StockTransaction.create(
           action_type: 'sell',
           stock_symbol: hash[:symbol],
-          stock_name: hash[:quote].company_name,
+          stock_name: portfolio.stock_name,
           stock_quantity: hash[:quantity],
           stock_price: hash[:price],
           total_amount: hash[:total],
