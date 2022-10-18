@@ -3,10 +3,16 @@ class Api::V1::StocksController < ApplicationController
 
   before_action :restrict_admin
   before_action :trade_verified?, :set_current, except: [:info]
-  before_action :set_IEX
+  before_action :set_IEX, except: [:most_active]
 
   def info
     render json: { company: @company, logo: @logo, quote: @quote }, status: :ok
+  end
+
+  def most_active
+    client = IEX::Api::Client.new
+    most_active = client.stock_market_list(:mostactive)
+    render json: { most_active: most_active }, status: :ok
   end
 
   def buy
