@@ -26,7 +26,7 @@ module Transaction
           stock_price: hash[:price],
           total_amount: hash[:total],
           user: wallet.user,
-          portfolio: portfolio,
+          portfolio: portfolio
         )
       portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity + hash[:quantity])
       wallet.update(balance: wallet.balance - hash[:total])
@@ -36,7 +36,7 @@ module Transaction
           portfolio: portfolio,
           transaction: transaction,
           message:
-            "You have purchased #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock.",
+            "You have purchased #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock."
         }
       )
     end
@@ -51,6 +51,7 @@ module Transaction
           stock_price: hash[:price],
           total_amount: hash[:total],
           user: wallet.user,
+          portfolio: portfolio
         )
       portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity - hash[:quantity])
       wallet.update(balance: wallet.balance + hash[:total])
@@ -60,7 +61,7 @@ module Transaction
           portfolio: portfolio,
           transaction: transaction,
           message:
-            "You have sold #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock.",
+            "You have sold #{hash[:quantity]} #{hash[:symbol]} stocks worth $#{hash[:total]} at $#{hash[:price]}/stock."
         }
       )
     end
