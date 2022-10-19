@@ -1,8 +1,9 @@
+class ApplicationController < ActionController::API
   include JsonWebToken
 
   before_action :authenticate_request, :email_verified?
 
-  FINTRADER_FRONTED_URL = 'https://react-stock-trading-app.onrender.com'
+  FINTRADER_FRONTEND_URL = 'https://react-stock-trading-app.onrender.com'
 
   private
 
