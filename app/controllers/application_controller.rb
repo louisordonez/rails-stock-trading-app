@@ -7,11 +7,11 @@
   private
 
   def admin_role
-    Role.find(2)
+    Role.find_by(:name 'admin')
   end
 
   def user_role
-    Role.find(1)
+    Role.find_by(:name 'user')
   end
 
   def restrict_admin
