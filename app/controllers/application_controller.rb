@@ -2,7 +2,7 @@
 
   before_action :authenticate_request, :email_verified?
 
-  FINTRADER_FRONTED_URL = 'https://react-stock-trading-app.vercel.app'
+  FINTRADER_FRONTED_URL = 'https://react-stock-trading-app.onrender.com'
 
   private
 
