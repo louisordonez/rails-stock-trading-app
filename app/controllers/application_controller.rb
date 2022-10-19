@@ -1,3 +1,4 @@
+require 'sprockets/railtie'
 class ApplicationController < ActionController::API
   include JsonWebToken
 
