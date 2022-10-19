@@ -55,10 +55,10 @@ This project is an application that allows users to buy and sell stocks.
 
 ### Backend
 
-- https://github.com/louisordonez/stock-trading-app
 - https://stock-trading-app-ha2z.onrender.com
+- https://github.com/louisordonez/stock-trading-app
 
 ### Frontend
 
-- https://github.com/louisordonez/react-stock-trading-app
 - https://react-stock-trading-app.onrender.com
+- https://github.com/louisordonez/react-stock-trading-app
