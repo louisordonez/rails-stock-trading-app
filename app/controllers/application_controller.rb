@@ -1,5 +1,3 @@
-require 'sprockets/railtie'
-class ApplicationController < ActionController::API
   include JsonWebToken
 
   before_action :authenticate_request, :email_verified?
