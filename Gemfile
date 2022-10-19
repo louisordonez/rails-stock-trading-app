@@ -60,3 +60,7 @@ gem "bcrypt"
 gem 'iex-ruby-client'
 
 gem "figaro"
+
+group :development, :test do
+  gem 'rspec-rails', '~> 6.0.0'
+end
