@@ -45,6 +45,12 @@ This project is a a Ruby on Rails application that allows users to buy and sell 
 
 ## Live Demo
 
-### Backend: https://stock-trading-app-ha2z.onrender.com
+### Backend
 
-### Frontend: https://react-stock-trading-app.onrender.com
+- https://github.com/louisordonez/stock-trading-app
+- https://stock-trading-app-ha2z.onrender.com
+
+### Frontend
+
+- https://github.com/louisordonez/react-stock-trading-app
+- https://react-stock-trading-app.onrender.com
