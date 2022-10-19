@@ -4,7 +4,7 @@ class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[show_user update_user destroy_user]
 
   def index
-    @users = User.all
+    @users = User.all.select { |user| user.roles.first == user_role }
     render json: @users, status: :ok
   end
 

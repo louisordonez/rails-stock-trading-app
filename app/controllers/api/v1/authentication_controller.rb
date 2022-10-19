@@ -34,10 +34,12 @@ class Api::V1::AuthenticationController < ApplicationController
       render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
     else
       if @user.email_verified
-        render json: { message: 'Account has already been verified.' }, status: :accepted
+        # render json: { message: 'Account has already been verified.' }, status: :accepted
+        redirect_to FINTRADER_FRONTED_URL, allow_other_host: true
       else
         @user.update(email_verified: true)
-        render json: { user: @user, message: 'Email confirmed. Account has been verified.' }, status: :ok
+        # render json: { user: @user, message: 'Email confirmed. Account has been verified.' }, status: :ok
+        redirect_to FINTRADER_FRONTED_URL, allow_other_host: true
       end
     end
   end

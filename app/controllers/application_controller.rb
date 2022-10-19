@@ -3,6 +3,8 @@ class ApplicationController < ActionController::API
 
   before_action :authenticate_request, :email_verified?
 
+  FINTRADER_FRONTED_URL = 'http://localhost:5173'
+
   private
 
   def admin_role
