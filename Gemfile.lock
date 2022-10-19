@@ -54,6 +54,10 @@ GEM
     activerecord (7.0.4)
       activemodel (= 7.0.4)
       activesupport (= 7.0.4)
+    activerecord-cockroachdb-adapter (7.0.0)
+      activerecord (~> 7.0.3)
+      pg (~> 1.2)
+      rgeo-activerecord (~> 7.0.0)
     activestorage (7.0.4)
       actionpack (= 7.0.4)
       activejob (= 7.0.4)
@@ -199,6 +203,10 @@ GEM
     rbs (2.7.0)
     reline (0.3.1)
       io-console (~> 0.5)
+    rgeo (2.4.0)
+    rgeo-activerecord (7.0.1)
+      activerecord (>= 5.0)
+      rgeo (>= 1.0.0)
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.1)
@@ -243,6 +251,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-cockroachdb-adapter (~> 7.0.0)
   bcrypt
   bootsnap
   debug

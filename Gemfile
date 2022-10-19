@@ -64,3 +64,5 @@ gem "figaro"
 group :development, :test do
   gem 'rspec-rails', '~> 6.0.0'
 end
+
+gem 'activerecord-cockroachdb-adapter', '~> 7.0.0'
