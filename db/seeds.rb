@@ -8,7 +8,7 @@ admin =
     email: 'admin@email.com',
     password: "#{Rails.application.credentials.users.admin_password}"
   )
-admin.roles << Role.find(2)
+admin.roles << Role.find_by(name: 'admin')
 admin.update(email_verified: true)
 admin.update(trade_verified: true)
 
@@ -19,7 +19,7 @@ verified =
     email: 'verified@email.com',
     password: "#{Rails.application.credentials.users.verified_password}"
   )
-verified.roles << Role.find(1)
+verified.roles << Role.find_by(name: 'user')
 verified.update(email_verified: true)
 verified.update(trade_verified: true)
 verified.create_wallet(balance: 10000.00)
@@ -31,7 +31,7 @@ unverified =
     email: 'unverified@email.com',
     password: "#{Rails.application.credentials.users.unverified_password}"
   )
-unverified.roles << Role.find(1)
+unverified.roles << Role.find_by(name: 'user')
 unverified.create_wallet(balance: 0)
 
 email_verified =
@@ -41,6 +41,6 @@ email_verified =
     email: 'email_verified@email.com',
     password: "#{Rails.application.credentials.users.email_verified_password}"
   )
-email_verified.roles << Role.find(1)
+email_verified.roles << Role.find_by(name: 'user')
 email_verified.update(email_verified: true)
 email_verified.create_wallet(balance: 10000.00)
