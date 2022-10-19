@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
 
   before_action :authenticate_request, :email_verified?
 
-  FINTRADER_FRONTED_URL = 'http://localhost:5173'
+  FINTRADER_FRONTED_URL = 'https://react-stock-trading-app.vercel.app'
 
   private
 
