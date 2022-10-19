@@ -2,7 +2,7 @@ class Api::V1::StocksController < ApplicationController
   include Transaction::Stock
 
   before_action :restrict_admin
-  before_action :trade_verified?, :set_current, except: [:info]
+  before_action :trade_verified?, :set_current, except: %i[info most_active get_symbols]
   before_action :set_IEX, except: %i[most_active get_symbols]
 
   def info
