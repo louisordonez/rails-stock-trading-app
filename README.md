@@ -1,6 +1,14 @@
 # stock-trading-app
 
-This project is a a Ruby on Rails application that allows users to buy and sell stocks.
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/landing.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_dashboard.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_market.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_wallet.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_dashboard.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_users.png)
+![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_transactions.png)
+
+This project is an application that allows users to buy and sell stocks.
 
 ## Tech Stack
 
