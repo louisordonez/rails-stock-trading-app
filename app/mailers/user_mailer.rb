@@ -7,4 +7,9 @@ class UserMailer < ApplicationMailer
     @url = "https://stock-trading-app-ha2z.onrender.com/api/v1/auth/verify?token=#{@email_token}"
     mail(to: @user.email, subject: 'Welcome to Fintrader!')
   end
+
+  def trade_verified_email
+    @user = params[:user]
+    mail(to: @user.email, subject: 'You are now verified for Trade!')
+  end
 end
