@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
 
   before_action :authenticate_request, :email_verified?
 
-  FINTRADER_FRONTEND_URL = 'https://react-stock-trading-app.onrender.com'
+  FINTRADER_FRONTEND_URL = 'http://localhost:5173/'
 
   private
 
