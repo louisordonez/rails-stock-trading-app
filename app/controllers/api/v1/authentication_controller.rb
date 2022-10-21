@@ -64,6 +64,7 @@ class Api::V1::AuthenticationController < ApplicationController
     else
       @user.update(trade_verified: true)
       render json: { user: @user, message: 'Account has been approved for trading.' }
+      UserMailer.with(user: @user).trade_verified_email.deliver_now
     end
   end
 
