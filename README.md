@@ -1,12 +1,12 @@
 # stock-trading-app
 
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/landing.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_dashboard.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_market.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/user/user_wallet.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_dashboard.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_users.png)
-![Screenshot](https://github.com/louisordonez/react-stock-trading-app/blob/main/src/assets/screenshots/admin/admin_transactions.png)
+![Screenshot](./docs/images/screenshots/landing.png)
+![Screenshot](./docs/images/screenshots/user/user_dashboard.png)
+![Screenshot](./docs/images/screenshots/user/user_market.png)
+![Screenshot](./docs/images/screenshots/user/user_wallet.png)
+![Screenshot](./docs/images/screenshots/admin/admin_dashboard.png)
+![Screenshot](./docs/images/screenshots/admin/admin_users.png)
+![Screenshot](./docs/images/screenshots/admin/admin_transactions.png)
 
 This project is an application that allows users to buy and sell stocks.
 
@@ -50,6 +50,10 @@ This project is an application that allows users to buy and sell stocks.
 
 - `email: email_verified@email.com`  
   `password: ThmM*Qt8AA56`
+
+## ERD
+
+![ERD](./docs/images/erd/Fintrader_ERD.jpeg)
 
 ## Live Demo
 
