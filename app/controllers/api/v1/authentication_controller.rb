@@ -1,5 +1,6 @@
 class Api::V1::AuthenticationController < ApplicationController
-  skip_before_action :authenticate_request, except: %i[request_email_token verify_trade check_role]
+  skip_before_action :authenticate_request,
+                     except: %i[request_email_token verify_trade check_role]
   skip_before_action :email_verified?, except: [:verify_trade]
   before_action :restrict_user, :set_user, only: [:verify_trade]
 
@@ -9,9 +10,19 @@ class Api::V1::AuthenticationController < ApplicationController
       payload = { user_id: @user.id }
       exp = 7.days.from_now.to_i
       access_token = JsonWebToken.encode(payload, exp)
-      render json: { user: @user, expiration: exp, access_token: access_token }, status: :ok
+      render json: {
+               user: @user,
+               expiration: exp,
+               access_token: access_token
+             },
+             status: :ok
     else
-      render json: { error: { message: 'Invalid login credentials.' } }, status: :unauthorized
+      render json: {
+               error: {
+                 message: 'Invalid login credentials.'
+               }
+             },
+             status: :unauthorized
     end
   end
 
@@ -22,16 +33,27 @@ class Api::V1::AuthenticationController < ApplicationController
       @user = User.find_by_email(decoded[:user_email])
       raise ActiveRecord::RecordNotFound if !@user
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found.' } }, status: :not_found
+      render json: {
+               error: {
+                 message: 'Record not found.'
+               }
+             },
+             status: :not_found
     rescue JWT::ExpiredSignature
       render json: {
                error: {
-                 message: 'Confirmation invalid. Verification token has expired.'
+                 message:
+                   'Confirmation invalid. Verification token has expired.'
                }
              },
              status: :unprocessable_entity
     rescue JWT::DecodeError
-      render json: { error: { message: 'Token invalid.' } }, status: :unprocessable_entity
+      render json: {
+               error: {
+                 message: 'Token invalid.'
+               }
+             },
+             status: :unprocessable_entity
     else
       if @user.email_verified
         # render json: { message: 'Account has already been verified.' }, status: :accepted
@@ -46,13 +68,17 @@ class Api::V1::AuthenticationController < ApplicationController
 
   def request_email_token
     if @current_user.email_verified
-      render json: { message: 'Account has already been verified.' }, status: :accepted
+      render json: {
+               message: 'Account has already been verified.'
+             },
+             status: :accepted
     else
       payload = { user_email: @current_user.email }
       new_token = JsonWebToken.encode(payload, 24.hours.from_now)
       render json: {
                email_token: new_token,
-               message: 'A confirmation email has been sent to verify your account.'
+               message:
+                 'A confirmation email has been sent to verify your account.'
              },
              status: :ok
     end
@@ -63,7 +89,10 @@ class Api::V1::AuthenticationController < ApplicationController
       render json: { message: 'Account has already been approved for trading.' }
     else
       @user.update(trade_verified: true)
-      render json: { user: @user, message: 'Account has been approved for trading.' }
+      render json: {
+               user: @user,
+               message: 'Account has been approved for trading.'
+             }
       UserMailer.with(user: @user).trade_verified_email.deliver_now
     end
   end
@@ -78,7 +107,12 @@ class Api::V1::AuthenticationController < ApplicationController
     begin
       @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found.' } }, status: :not_found
+      render json: {
+               error: {
+                 message: 'Record not found.'
+               }
+             },
+             status: :not_found
     end
   end
 end

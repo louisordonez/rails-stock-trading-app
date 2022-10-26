@@ -24,7 +24,12 @@ class Api::V1::TransactionsController < ApplicationController
     begin
       @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
+      render json: {
+               error: {
+                 message: 'Record not found'
+               }
+             },
+             status: :not_found
     end
   end
 end

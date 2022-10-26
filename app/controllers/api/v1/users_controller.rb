@@ -1,6 +1,9 @@
 class Api::V1::UsersController < ApplicationController
-  skip_before_action :authenticate_request, :email_verified?, only: [:create_user]
-  before_action :restrict_user, only: %i[index show_user create_admin update_user destroy_user]
+  skip_before_action :authenticate_request,
+                     :email_verified?,
+                     only: [:create_user]
+  before_action :restrict_user,
+                only: %i[index show_user create_admin update_user destroy_user]
   before_action :set_user, only: %i[show_user update_user destroy_user]
 
   def index
@@ -26,12 +29,21 @@ class Api::V1::UsersController < ApplicationController
       render json: {
                user: @user,
                email_token: email_token,
-               message: 'A confirmation email has been sent to verify your account.'
+               message:
+                 'A confirmation email has been sent to verify your account.'
              },
              status: :created
-      UserMailer.with(user: @user, email_token: email_token).confirm_email.deliver_now
+      UserMailer
+        .with(user: @user, email_token: email_token)
+        .confirm_email
+        .deliver_now
     else
-      render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
+      render json: {
+               error: {
+                 messages: @user.errors.full_messages
+               }
+             },
+             status: :unprocessable_entity
     end
   end
 
@@ -44,34 +56,68 @@ class Api::V1::UsersController < ApplicationController
       render json: {
                user: @user,
                email_token: email_token,
-               message: 'A confirmation email has been sent to verify your account.'
+               message:
+                 'A confirmation email has been sent to verify your account.'
              },
              status: :created
     else
-      render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
+      render json: {
+               error: {
+                 messages: @user.errors.full_messages
+               }
+             },
+             status: :unprocessable_entity
     end
   end
 
   def update_current
     if !params[:password].nil? && params[:password].strip.length < 6
-      render json: { error: { message: 'Password must be at least 6 characters long.' } }, status: :unprocessable_entity
+      render json: {
+               error: {
+                 message: 'Password must be at least 6 characters long.'
+               }
+             },
+             status: :unprocessable_entity
     else
       if @current_user.update(user_params)
-        render json: { user: @current_user, message: 'User account has been updated.' }, status: :ok
+        render json: {
+                 user: @current_user,
+                 message: 'User account has been updated.'
+               },
+               status: :ok
       else
-        render json: { error: { messages: @current_user.errors.full_messages } }, status: :unprocessable_entity
+        render json: {
+                 error: {
+                   messages: @current_user.errors.full_messages
+                 }
+               },
+               status: :unprocessable_entity
       end
     end
   end
 
   def update_user
     if @user.roles.first == admin_role
-      render json: { error: { message: 'Cannot update Admin account' } }, status: :forbidden
+      render json: {
+               error: {
+                 message: 'Cannot update Admin account'
+               }
+             },
+             status: :forbidden
     else
       if @user.update(user_update_params)
-        render json: { user: @user, message: 'User account has been updated.' }, status: :ok
+        render json: {
+                 user: @user,
+                 message: 'User account has been updated.'
+               },
+               status: :ok
       else
-        render json: { error: { messages: @user.errors.full_messages } }, status: :unprocessable_entity
+        render json: {
+                 error: {
+                   messages: @user.errors.full_messages
+                 }
+               },
+               status: :unprocessable_entity
       end
     end
   end
@@ -83,7 +129,12 @@ class Api::V1::UsersController < ApplicationController
 
   def destroy_user
     if @user.roles.first == admin_role
-      render json: { error: { message: 'Cannot delete Admin account.' } }, status: :forbidden
+      render json: {
+               error: {
+                 message: 'Cannot delete Admin account.'
+               }
+             },
+             status: :forbidden
     else
       @user.destroy
       render json: { message: 'User account has been deleted.' }, status: :ok
@@ -96,7 +147,12 @@ class Api::V1::UsersController < ApplicationController
     begin
       @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-      render json: { error: { message: 'Record not found' } }, status: :not_found
+      render json: {
+               error: {
+                 message: 'Record not found'
+               }
+             },
+             status: :not_found
     end
   end
 

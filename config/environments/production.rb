@@ -21,7 +21,8 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present? || ENV['RENDER'].present?
+  config.public_file_server.enabled =
+    ENV['RAILS_SERVE_STATIC_FILES'].present? || ENV['RENDER'].present?
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -58,7 +59,10 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.default_url_options = { host: 'example.com', protocol: 'https://' }
+  config.action_mailer.default_url_options = {
+    host: 'example.com',
+    protocol: 'https://'
+  }
 
   # Gmail Configuration
   config.action_mailer.delivery_method = :smtp

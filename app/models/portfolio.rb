@@ -4,8 +4,11 @@ class Portfolio < ApplicationRecord
 
   validates :stock_name, presence: true
   validates :stock_symbol, presence: true
-  validates :stocks_owned_quantity, presence: true,
-              numericality: { greater_than_or_equal_to: 0 }
+  validates :stocks_owned_quantity,
+            presence: true,
+            numericality: {
+              greater_than_or_equal_to: 0
+            }
 
   before_validation :set_default
 

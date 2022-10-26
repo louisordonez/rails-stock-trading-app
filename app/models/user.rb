@@ -11,7 +11,12 @@ class User < ApplicationRecord
   validates :last_name, presence: true
   validates :password, presence: true, length: { minimum: 6 }, on: :create
 
-  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true
+  validates :email,
+            presence: true,
+            format: {
+              with: URI::MailTo::EMAIL_REGEXP
+            },
+            uniqueness: true
   validates :email_verified, inclusion: [true, false]
   validates :trade_verified, inclusion: [true, false]
 

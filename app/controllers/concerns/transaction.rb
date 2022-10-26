@@ -1,22 +1,42 @@
 module Transaction
   module Wallet
     def self.deposit(wallet, total_amount)
-      transaction = wallet.wallet_transactions.create(action_type: 'deposit', total_amount: total_amount)
+      transaction =
+        wallet.wallet_transactions.create(
+          action_type: 'deposit',
+          total_amount: total_amount
+        )
       wallet.update(balance: wallet.balance + total_amount)
-      { wallet: wallet, transaction: transaction, message: "Deposited $#{total_amount} to your account." }
+      {
+        wallet: wallet,
+        transaction: transaction,
+        message: "Deposited $#{total_amount} to your account."
+      }
     end
 
     def self.withdraw(wallet, total_amount)
-      transaction = wallet.wallet_transactions.create(action_type: 'withdrawal', total_amount: total_amount)
+      transaction =
+        wallet.wallet_transactions.create(
+          action_type: 'withdrawal',
+          total_amount: total_amount
+        )
       wallet.update(balance: wallet.balance - total_amount)
-      { wallet: wallet, transaction: transaction, message: "Withdrawn $#{total_amount} to your account." }
+      {
+        wallet: wallet,
+        transaction: transaction,
+        message: "Withdrawn $#{total_amount} to your account."
+      }
     end
   end
 
   module Stock
     def self.buy(wallet, portfolios, hash)
       portfolio = portfolios.find_by(stock_symbol: hash[:symbol])
-      portfolio = Portfolio.create(stock_name: hash[:quote].company_name, stock_symbol: hash[:symbol]) if !portfolio
+      portfolio =
+        Portfolio.create(
+          stock_name: hash[:quote].company_name,
+          stock_symbol: hash[:symbol]
+        ) if !portfolio
       transaction =
         StockTransaction.create(
           action_type: 'buy',
@@ -28,7 +48,9 @@ module Transaction
           user: wallet.user,
           portfolio: portfolio
         )
-      portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity + hash[:quantity])
+      portfolio.update(
+        stocks_owned_quantity: portfolio.stocks_owned_quantity + hash[:quantity]
+      )
       wallet.update(balance: wallet.balance - hash[:total])
       return(
         {
@@ -53,7 +75,9 @@ module Transaction
           user: wallet.user,
           portfolio: portfolio
         )
-      portfolio.update(stocks_owned_quantity: portfolio.stocks_owned_quantity - hash[:quantity])
+      portfolio.update(
+        stocks_owned_quantity: portfolio.stocks_owned_quantity - hash[:quantity]
+      )
       wallet.update(balance: wallet.balance + hash[:total])
       return(
         {
