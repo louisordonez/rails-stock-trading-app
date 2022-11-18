@@ -4,13 +4,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <h1>Welcome to Fintrader, <eext1 /> !</h1>
+    <h1>Welcome to Fintrader, <% @user.first_name %> <% @user.last_name %>!</h1>
     <p>
       You have successfully signed up to Fintrader, your email is:
-      <eext2 /> .<br />
+      <% @user.email %> .<br />
     </p>
     <p>Click the link below to confirm your account</p>
-    <div><eext3 /></div>
+    <div><% @url %></div>
     <p>Thanks for joining and have a great day!</p>
   </body>
 </html>
