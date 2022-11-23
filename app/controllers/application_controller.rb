@@ -77,13 +77,14 @@ class ApplicationController < ActionController::API
   end
 
   def email_verified?
-    if !@current_user.email_verified
+    unless @current_user.email_verified
       render json: {
                error: {
+                 user: @current_user,
                  message: 'Account needs to be verified to continue.'
                }
              },
-             status: :forbidden
+             status: :ok
     end
   end
 end
