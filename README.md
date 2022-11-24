@@ -5,7 +5,6 @@ This project is an application that allows users to buy and sell stocks.
 ## Tech Stack
 
 - Ruby on Rails
-- React
 
 ## Features
 
