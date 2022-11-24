@@ -1,4 +1,4 @@
-# stock-trading-app
+# rails-stock-trading-app
 
 ![Screenshot](./docs/images/screenshots/landing.png)
 ![Screenshot](./docs/images/screenshots/user/user_dashboard.png)
