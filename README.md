@@ -5,6 +5,7 @@ This project is an application that allows users to buy and sell stocks.
 ## Tech Stack
 
 - Ruby on Rails
+- React
 
 ## Features
 
@@ -32,7 +33,11 @@ This project is an application that allows users to buy and sell stocks.
 
 ![ERD](./docs/images/erd/Fintrader_ERD.jpeg)
 
+
 ## Live Demo
 
-- https://stock-trading-app-ha2z.onrender.com
-- https://github.com/louisordonez/stock-trading-app
+https://react-stock-trading-app.onrender.com
+
+## Frontend
+
+https://github.com/louisordonez/react-stock-trading-app
