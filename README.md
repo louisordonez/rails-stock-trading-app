@@ -1,5 +1,13 @@
 # rails-stock-trading-app
 
+![Screenshot](./docs/images/screenshots/landing.png)
+![Screenshot](./docs/images/screenshots/user/user_dashboard.png)
+![Screenshot](./docs/images/screenshots/user/user_market.png)
+![Screenshot](./docs/images/screenshots/user/user_wallet.png)
+![Screenshot](./docs/images/screenshots/admin/admin_dashboard.png)
+![Screenshot](./docs/images/screenshots/admin/admin_users.png)
+![Screenshot](./docs/images/screenshots/admin/admin_transactions.png)
+
 This project is an application that allows users to buy and sell stocks.
 
 ## Tech Stack
@@ -51,6 +59,6 @@ This project is an application that allows users to buy and sell stocks.
 
 https://react-stock-trading-app.onrender.com
 
-## Frontend
+## Frontend Repo
 
 https://github.com/louisordonez/react-stock-trading-app
