@@ -14,6 +14,7 @@ This project is an application that allows users to buy and sell stocks.
 
 - Ruby on Rails
 - React
+- IEX Cloud API
 
 ## Features
 
