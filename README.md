@@ -44,8 +44,12 @@ This project is an application that allows users to buy and sell stocks.
 
 ## Test Accounts
 
+### Admin
+
 - `email: admin@email.com`  
   `password: #x9xNb7vMR5*`
+
+### Trader
 
 - `email: verified@email.com`  
   `password: Cni9Gu9gAZ8&`
