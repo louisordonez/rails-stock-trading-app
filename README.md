@@ -40,7 +40,7 @@ This project is an application that allows users to buy and sell stocks.
 
 ## ERD
 
-![ERD](./docs/images/erd/Fintrader_ERD.jpeg)
+![ERD](./docs/images/erd/fintrader_erd.png)
 
 ## Test Accounts
 
